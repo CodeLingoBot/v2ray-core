@@ -1454,7 +1454,7 @@ type earlyDataReader struct {
 	c *Conn
 }
 
-// c.in.Mutex <= L
+// Read: c.in.Mutex <= L
 func (r earlyDataReader) Read(b []byte) (n int, err error) {
 	c := r.c
 

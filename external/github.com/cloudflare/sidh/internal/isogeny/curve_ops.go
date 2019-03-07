@@ -4,7 +4,7 @@ type CurveOperations struct {
 	Params *SidhParams
 }
 
-// Computes j-invariant for a curve y2=x3+A/Cx+x with A,C in F_(p^2). Result
+// Jinvariant: Computes j-invariant for a curve y2=x3+A/Cx+x with A,C in F_(p^2). Result
 // is returned in jBytes buffer, encoded in little-endian format. Caller
 // provided jBytes buffer has to be big enough to j-invariant value. In case
 // of SIDH, buffer size must be at least size of shared secret.
@@ -33,7 +33,7 @@ func (c *CurveOperations) Jinvariant(cparams *ProjectiveCurveParameters, jBytes 
 	c.Fp2ToBytes(jBytes, &j)
 }
 
-// Given affine points x(P), x(Q) and x(Q-P) in a extension field F_{p^2}, function
+// RecoverCoordinateA: Given affine points x(P), x(Q) and x(Q-P) in a extension field F_{p^2}, function
 // recorvers projective coordinate A of a curve. This is Algorithm 10 from SIKE.
 func (c *CurveOperations) RecoverCoordinateA(curve *ProjectiveCurveParameters, xp, xq, xr *Fp2Element) {
 	var t0, t1 Fp2Element
@@ -54,7 +54,7 @@ func (c *CurveOperations) RecoverCoordinateA(curve *ProjectiveCurveParameters, x
 	op.Sub(&curve.A, &curve.A, &t1)              // A  = A - t1
 }
 
-// Computes equivalence (A:C) ~ (A+2C : A-2C)
+// CalcCurveParamsEquiv3: Computes equivalence (A:C) ~ (A+2C : A-2C)
 func (c *CurveOperations) CalcCurveParamsEquiv3(cparams *ProjectiveCurveParameters) CurveCoefficientsEquiv {
 	var coef CurveCoefficientsEquiv
 	var c2 Fp2Element
@@ -68,7 +68,7 @@ func (c *CurveOperations) CalcCurveParamsEquiv3(cparams *ProjectiveCurveParamete
 	return coef
 }
 
-// Computes equivalence (A:C) ~ (A+2C : 4C)
+// CalcCurveParamsEquiv4: Computes equivalence (A:C) ~ (A+2C : 4C)
 func (c *CurveOperations) CalcCurveParamsEquiv4(cparams *ProjectiveCurveParameters) CurveCoefficientsEquiv {
 	var coefEq CurveCoefficientsEquiv
 	var op = c.Params.Op
@@ -81,7 +81,7 @@ func (c *CurveOperations) CalcCurveParamsEquiv4(cparams *ProjectiveCurveParamete
 	return coefEq
 }
 
-// Helper function for RightToLeftLadder(). Returns A+2C / 4.
+// CalcAplus2Over4: Helper function for RightToLeftLadder(). Returns A+2C / 4.
 func (c *CurveOperations) CalcAplus2Over4(cparams *ProjectiveCurveParameters) (ret Fp2Element) {
 	var tmp Fp2Element
 	var op = c.Params.Op
@@ -98,7 +98,7 @@ func (c *CurveOperations) CalcAplus2Over4(cparams *ProjectiveCurveParameters) (r
 	return
 }
 
-// Recovers (A:C) curve parameters from projectively equivalent (A+2C:A-2C).
+// RecoverCurveCoefficients3: Recovers (A:C) curve parameters from projectively equivalent (A+2C:A-2C).
 func (c *CurveOperations) RecoverCurveCoefficients3(cparams *ProjectiveCurveParameters, coefEq *CurveCoefficientsEquiv) {
 	var op = c.Params.Op
 
@@ -110,7 +110,7 @@ func (c *CurveOperations) RecoverCurveCoefficients3(cparams *ProjectiveCurvePara
 	return
 }
 
-// Recovers (A:C) curve parameters from projectively equivalent (A+2C:4C).
+// RecoverCurveCoefficients4: Recovers (A:C) curve parameters from projectively equivalent (A+2C:4C).
 func (c *CurveOperations) RecoverCurveCoefficients4(cparams *ProjectiveCurveParameters, coefEq *CurveCoefficientsEquiv) {
 	var op = c.Params.Op
 	// cparams.C = (4C)*1/2=2C
@@ -157,7 +157,7 @@ func (c *CurveOperations) xDblAdd(P, Q, QmP *ProjectivePoint, a24 *Fp2Element) (
 	return
 }
 
-// Given the curve parameters, xP = x(P), computes xP = x([2^k]P)
+// Pow2k: Given the curve parameters, xP = x(P), computes xP = x([2^k]P)
 // Safe to overlap xP, x2P.
 func (c *CurveOperations) Pow2k(xP *ProjectivePoint, params *CurveCoefficientsEquiv, k uint32) {
 	var t0, t1 Fp2Element
@@ -178,7 +178,7 @@ func (c *CurveOperations) Pow2k(xP *ProjectivePoint, params *CurveCoefficientsEq
 	}
 }
 
-// Given the curve parameters, xP = x(P), and k >= 0, compute xP = x([3^k]P).
+// Pow3k: Given the curve parameters, xP = x(P), and k >= 0, compute xP = x([3^k]P).
 //
 // Safe to overlap xP, xR.
 func (c *CurveOperations) Pow3k(xP *ProjectivePoint, params *CurveCoefficientsEquiv, k uint32) {
@@ -212,7 +212,7 @@ func (c *CurveOperations) Pow3k(xP *ProjectivePoint, params *CurveCoefficientsEq
 	}
 }
 
-// Set (y1, y2, y3)  = (1/x1, 1/x2, 1/x3).
+// Fp2Batch3Inv: Set (y1, y2, y3)  = (1/x1, 1/x2, 1/x3).
 //
 // All xi, yi must be distinct.
 func (c *CurveOperations) Fp2Batch3Inv(x1, x2, x3, y1, y2, y3 *Fp2Element) {
@@ -253,7 +253,7 @@ func (c *CurveOperations) ScalarMul3Pt(cparams *ProjectiveCurveParameters, P, Q,
 	return R1
 }
 
-// Convert the input to wire format.
+// Fp2ToBytes: Convert the input to wire format.
 //
 // The output byte slice must be at least 2*bytelen(p) bytes long.
 func (c *CurveOperations) Fp2ToBytes(output []byte, fp2 *Fp2Element) {
@@ -273,7 +273,7 @@ func (c *CurveOperations) Fp2ToBytes(output []byte, fp2 *Fp2Element) {
 	}
 }
 
-// Read 2*bytelen(p) bytes into the given ExtensionFieldElement.
+// Fp2FromBytes reads 2*bytelen(p) bytes into the given ExtensionFieldElement.
 //
 // It is an error to call this function if the input byte slice is less than 2*bytelen(p) bytes long.
 func (c *CurveOperations) Fp2FromBytes(fp2 *Fp2Element, input []byte) {
@@ -294,17 +294,17 @@ func (c *CurveOperations) Fp2FromBytes(fp2 *Fp2Element, input []byte) {
    Mechnisms used for isogeny calculations
    -------------------------------------------------------------------------*/
 
-// Constructs isogeny3 objects
+// Newisogeny3: Constructs isogeny3 objects
 func Newisogeny3(op FieldOps) Isogeny {
 	return &isogeny3{Field: op}
 }
 
-// Constructs isogeny4 objects
+// Newisogeny4: Constructs isogeny4 objects
 func Newisogeny4(op FieldOps) Isogeny {
 	return &isogeny4{isogeny3: isogeny3{Field: op}}
 }
 
-// Given a three-torsion point p = x(PB) on the curve E_(A:C), construct the
+// GenerateCurve: Given a three-torsion point p = x(PB) on the curve E_(A:C), construct the
 // three-isogeny phi : E_(A:C) -> E_(A:C)/<P_3> = E_(A':C').
 //
 // Input: (XP_3: ZP_3), where P_3 has exact order 3 on E_A/C
@@ -339,7 +339,7 @@ func (phi *isogeny3) GenerateCurve(p *ProjectivePoint) CurveCoefficientsEquiv {
 	return coefEq
 }
 
-// Given a 3-isogeny phi and a point pB = x(PB), compute x(QB), the x-coordinate
+// EvaluatePoint: Given a 3-isogeny phi and a point pB = x(PB), compute x(QB), the x-coordinate
 // of the image QB = phi(PB) of PB under phi : E_(A:C) -> E_(A':C').
 //
 // The output xQ = x(Q) is then a point on the curve E_(A':C'); the curve
@@ -364,7 +364,7 @@ func (phi *isogeny3) EvaluatePoint(p *ProjectivePoint) ProjectivePoint {
 	return q
 }
 
-// Given a four-torsion point p = x(PB) on the curve E_(A:C), construct the
+// GenerateCurve: Given a four-torsion point p = x(PB) on the curve E_(A:C), construct the
 // four-isogeny phi : E_(A:C) -> E_(A:C)/<P_4> = E_(A':C').
 //
 // Input: (XP_4: ZP_4), where P_4 has exact order 4 on E_A/C
@@ -388,7 +388,7 @@ func (phi *isogeny4) GenerateCurve(p *ProjectivePoint) CurveCoefficientsEquiv {
 	return coefEq
 }
 
-// Given a 4-isogeny phi and a point xP = x(P), compute x(Q), the x-coordinate
+// EvaluatePoint: Given a 4-isogeny phi and a point xP = x(P), compute x(Q), the x-coordinate
 // of the image Q = phi(P) of P under phi : E_(A:C) -> E_(A':C').
 //
 // Input: Isogeny returned by GenerateCurve and point q=(Qx,Qz) from E0_A/C
@@ -427,7 +427,7 @@ func (point *ProjectivePoint) ToAffine(c *CurveOperations) *Fp2Element {
 	return &affine_x
 }
 
-// Cleans data in fp
+// Zeroize: Cleans data in fp
 func (fp *Fp2Element) Zeroize() {
 	// Zeroizing in 2 seperated loops tells compiler to
 	// use fast runtime.memclr()

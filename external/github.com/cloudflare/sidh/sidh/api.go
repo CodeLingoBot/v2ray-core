@@ -56,12 +56,12 @@ type PrivateKey struct {
 	S []byte
 }
 
-// Accessor to the domain parameters
+// Params: Accessor to the domain parameters
 func (key *key) Params() *SidhParams {
 	return key.params
 }
 
-// Accessor to key variant
+// Variant: Accessor to key variant
 func (key *key) Variant() KeyVariant {
 	return key.keyVariant
 }
@@ -102,7 +102,7 @@ func (pub *PublicKey) Import(input []byte) error {
 	return nil
 }
 
-// Exports currently stored key. In case structure hasn't been filled with key data
+// Export: Exports currently stored key. In case structure hasn't been filled with key data
 // returned byte string is filled with zeros.
 func (pub *PublicKey) Export() []byte {
 	output := make([]byte, pub.params.PublicKeySize)
@@ -119,7 +119,7 @@ func (pub *PublicKey) Size() int {
 	return pub.params.PublicKeySize
 }
 
-// Exports currently stored key. In case structure hasn't been filled with key data
+// Export: Exports currently stored key. In case structure hasn't been filled with key data
 // returned byte string is filled with zeros.
 func (prv *PrivateKey) Export() []byte {
 	ret := make([]byte, len(prv.Scalar)+len(prv.S))
@@ -150,7 +150,7 @@ func (prv *PrivateKey) Import(input []byte) error {
 	return nil
 }
 
-// Generates random private key for SIDH or SIKE. Generated value is
+// Generate: Generates random private key for SIDH or SIKE. Generated value is
 // formed as little-endian integer from key-space <2^(e2-1)..2^e2 - 1>
 // for KeyVariant_A or <2^(s-1)..2^s - 1>, where s = floor(log_2(3^e3)),
 // for KeyVariant_B.
@@ -189,7 +189,7 @@ func (prv *PrivateKey) Generate(rand io.Reader) error {
 	return err
 }
 
-// Generates public key.
+// GeneratePublicKey: Generates public key.
 //
 // Constant time.
 func (prv *PrivateKey) GeneratePublicKey() *PublicKey {
@@ -199,7 +199,7 @@ func (prv *PrivateKey) GeneratePublicKey() *PublicKey {
 	return publicKeyGenB(prv)
 }
 
-// Computes a shared secret which is a j-invariant. Function requires that pub has
+// DeriveSecret: Computes a shared secret which is a j-invariant. Function requires that pub has
 // different KeyVariant than prv. Length of returned output is 2*ceil(log_2 P)/8),
 // where P is a prime defining finite field.
 //

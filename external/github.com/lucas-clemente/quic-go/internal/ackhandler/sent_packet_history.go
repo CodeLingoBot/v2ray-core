@@ -94,7 +94,7 @@ func (h *sentPacketHistory) FirstOutstanding() *Packet {
 	return &h.firstOutstanding.Value
 }
 
-// QueuePacketForRetransmission marks a packet for retransmission.
+// MarkCannotBeRetransmitted: marks a packet for retransmission.
 // A packet can only be queued once.
 func (h *sentPacketHistory) MarkCannotBeRetransmitted(pn protocol.PacketNumber) error {
 	el, ok := h.packetMap[pn]

@@ -123,7 +123,7 @@ func newStream(streamID protocol.StreamID,
 	return s
 }
 
-// need to define StreamID() here, since both receiveStream and readStream have a StreamID()
+// StreamID: need to define StreamID() here, since both receiveStream and readStream have a StreamID()
 func (s *stream) StreamID() protocol.StreamID {
 	// the result is same for receiveStream and sendStream
 	return s.sendStream.StreamID()

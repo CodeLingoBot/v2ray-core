@@ -72,7 +72,7 @@ func (h *receivedPacketHandler) ReceivedPacket(
 	}
 }
 
-// only to be used with 1-RTT packets
+// IgnoreBelow: only to be used with 1-RTT packets
 func (h *receivedPacketHandler) IgnoreBelow(pn protocol.PacketNumber) {
 	h.oneRTTPackets.IgnoreBelow(pn)
 }

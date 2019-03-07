@@ -57,7 +57,7 @@ func (fp503Ops) Mul(dest, lhs, rhs *Fp2Element) {
 	fp503MontgomeryReduce(&dest.A, &ac_minus_bd) // = (a*c - b*d)*R mod p
 }
 
-// Set dest = 1/x
+// Inv: Set dest = 1/x
 //
 // Allowed to overlap dest with x.
 //
@@ -122,7 +122,7 @@ func (fp503Ops) Square(dest, x *Fp2Element) {
 	fp503MontgomeryReduce(&dest.B, &ab2)           // = 2*a*b*R mod p
 }
 
-// In case choice == 1, performs following swap in constant time:
+// CondSwap: In case choice == 1, performs following swap in constant time:
 // 	xPx <-> xQx
 //	xPz <-> xQz
 // Otherwise returns xPx, xPz, xQx, xQz unchanged
@@ -133,7 +133,7 @@ func (fp503Ops) CondSwap(xPx, xPz, xQx, xQz *Fp2Element, choice uint8) {
 	fp503ConditionalSwap(&xPz.B, &xQz.B, choice)
 }
 
-// Converts values in x.A and x.B to Montgomery domain
+// ToMontgomery: Converts values in x.A and x.B to Montgomery domain
 // x.A = x.A * R mod p
 // x.B = x.B * R mod p
 // Performs v = v*R^2*R^(-1) mod p, for both x.A and x.B
@@ -147,7 +147,7 @@ func (fp503Ops) ToMontgomery(x *Fp2Element) {
 	fp503MontgomeryReduce(&x.B, &aRR)
 }
 
-// Converts values in x.A and x.B from Montgomery domain
+// FromMontgomery: Converts values in x.A and x.B from Montgomery domain
 // a = x.A mod p
 // b = x.B mod p
 //
@@ -180,7 +180,7 @@ type primeFieldElement struct {
 	A FpElement
 }
 
-// Set dest = lhs * rhs.
+// Mul: Set dest = lhs * rhs.
 //
 // Allowed to overlap lhs or rhs with dest.
 //
@@ -196,7 +196,7 @@ func (dest *primeFieldElement) Mul(lhs, rhs *primeFieldElement) *primeFieldEleme
 	return dest
 }
 
-// Set dest = x^(2^k), for k >= 1, by repeated squarings.
+// Pow2k: Set dest = x^(2^k), for k >= 1, by repeated squarings.
 //
 // Allowed to overlap x with dest.
 //
@@ -210,7 +210,7 @@ func (dest *primeFieldElement) Pow2k(x *primeFieldElement, k uint8) *primeFieldE
 	return dest
 }
 
-// Set dest = x^((p-3)/4).  If x is square, this is 1/sqrt(x).
+// P34: Set dest = x^((p-3)/4).  If x is square, this is 1/sqrt(x).
 // Uses variation of sliding-window algorithm from with window size
 // of 5 and least to most significant bit sliding (left-to-right)
 // See HAC 14.85 for general description.

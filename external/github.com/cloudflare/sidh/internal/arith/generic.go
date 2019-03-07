@@ -7,7 +7,7 @@ type Uint128 struct {
 	H, L uint64
 }
 
-// Adds 2 64bit digits in constant time.
+// Addc64 adds 2 64bit digits in constant time.
 // Returns result and carry (1 or 0)
 func Addc64(cin, a, b uint64) (ret, cout uint64) {
 	t := a + cin
@@ -16,7 +16,7 @@ func Addc64(cin, a, b uint64) (ret, cout uint64) {
 	return
 }
 
-// Substracts 2 64bit digits in constant time.
+// Subc64: Substracts 2 64bit digits in constant time.
 // Returns result and borrow (1 or 0)
 func Subc64(bIn, a, b uint64) (ret, bOut uint64) {
 	var tmp1 = a - b
@@ -28,7 +28,7 @@ func Subc64(bIn, a, b uint64) (ret, bOut uint64) {
 	return
 }
 
-// Multiplies 2 64bit digits in constant time
+// Mul64: Multiplies 2 64bit digits in constant time
 func Mul64(a, b uint64) (res Uint128) {
 	var al, bl, ah, bh, albl, albh, ahbl, ahbh uint64
 	var res1, res2, res3 uint64
